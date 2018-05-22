@@ -7,6 +7,9 @@
 #include <QTextEdit>
 #include <QSpinBox>
 #include <QPushButton>
+#include <QTimer>
+
+#include "qt_genericclient.hpp"
 
 class MainWindow : public QMainWindow
 {
@@ -17,14 +20,18 @@ public:
     ~MainWindow();
 public slots:
     void connectToServer();
+    void update();
 
 private:
     QWidget *mainWidget;
-    QHBoxLayout *hlayout;
+    QHBoxLayout *serverConnectLayout;
 
     QTextEdit *serverAddress;
     QSpinBox *serverPort;
     QPushButton *serverConnect;
+
+    QTimer *timer;
+    QT_GenericClient *client;
 
     const int refreshDelay = 20;
 };

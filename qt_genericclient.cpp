@@ -1,6 +1,84 @@
 #include "qt_genericclient.hpp"
 
-QT_GenericClient::QT_GenericClient(QObject *parent) : QObject(parent)
+QT_GenericClient::QT_GenericClient(QString address, quint16 port, QObject *parent) : QObject(parent), alive{true}
 {
+    socket = new QTcpSocket(this);
 
+    connect(socket, SIGNAL(connected()), this, SLOT(connectedToServer()));
+    connect(socket, SIGNAL(disconnected()), this, SLOT(disconnectedFromServer()));
+    connect(socket, SIGNAL(readyRead()), this, SLOT(receivedFromServer()));
+    connect(socket, SIGNAL(bytesWritten(qint64)), this, SLOT(sentToServer(qint64)));
+}
+
+void QT_GenericClient::Connect(QString address, quint16 port){
+    socket->connectToHost(address, port);
+
+    if(!socket->waitForDisconnected(timeout))
+    {
+        qDebug() << "Error: " << socket->errorString();
+    }
+}
+
+std::vector<std::string> QT_GenericClient::receive(){
+    std::vector<std::string> output;
+
+    for(const auto &it : buffer){
+        output.push_back(it);
+    }
+    buffer.clear();
+
+    return output;
+}
+
+bool QT_GenericClient::send(const std::string &message){
+    if (message.length() <= 0) {
+        qDebug() << "No message to send !";
+        return false;
+    }
+
+    socket->write(message.c_str());
+    socket->flush();
+
+    return socket->waitForBytesWritten(writeWaitTime);
+}
+
+bool QT_GenericClient::action(std::string msg) {
+    auto cmd = cmdFormat::parseCommand(msg);
+
+    if (!cmd.command.compare("quit")) {
+        socket->close();
+        alive = false;
+    } else if (!cmd.command.compare("auth")) {
+        if (cmd.args.size() < 2) {
+            send(cmd.id + "@auth:2 error wrong values");
+        } else {
+            id = cmd.args[0];
+            key = cmd.args[1];
+        }
+    }else {
+        return false;
+    }
+
+    return true;
+}
+void QT_GenericClient::connectedToServer(){
+    qDebug() << "Connected to Server !";
+}
+
+void QT_GenericClient::disconnectedFromServer(){
+    qDebug() << "Disconnected from server !";
+}
+
+void QT_GenericClient::receivedFromServer(){
+    auto tmpBuffer = socket->readAll();
+
+    if (tmpBuffer.size() <= 0) {
+        qDebug() << "Error: disconnected !";
+    } else if(!action(tmpBuffer)) {
+        buffer.append(tmpBuffer.toStdString());
+    }
+}
+
+void QT_GenericClient::sentToServer(qint64 bytes){
+    qDebug() << "Sent to Server: " << bytes;
 }
