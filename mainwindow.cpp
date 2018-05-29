@@ -116,7 +116,11 @@ void MainWindow::update(){
                     world->move(cmd.args[0], std::atoi(cmd.args[1].c_str()), cmd.args[2], std::atoi(cmd.args[3].c_str()));
                 }
             }else if(!cmd.command.compare("damage")){
-
+                if(cmd.args.size() < 3){
+                    client->send("SERVER@damage:2 error invalid parameters");
+                }else if(world != nullptr){
+                    world->damage(cmd.args[0], std::atoi(cmd.args[1].c_str()), std::atoi(cmd.args[2].c_str()));
+                }
             }
         }
     }

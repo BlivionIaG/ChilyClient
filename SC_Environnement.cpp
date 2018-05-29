@@ -40,20 +40,26 @@ void SC_Environnement::removeAnimal(std::shared_ptr<SC_Animal> animal)
     animalsToDelete.push_back(animal);
 }
 
-
-
 void SC_Environnement::attack(std::string attackerType, int attackerId, std::string victimType, int victimId){
     auto attackerTmp = animals[attackerType];
     auto victimTmp = animals[victimType];
 
-    auto attacker = findAnimal(attackerTmp, attackerId);
-    auto victim = findAnimal(victimTmp, victimId);
+    auto attacker = findAnimal(attackerTmp, attackerId)->get();
+    auto victim = findAnimal(victimTmp, victimId)->get();
 
-    attacker->get()->attack(*victim->get());
+    attacker->attack(*victim);
+    logs->addToLog(logs->getID() + "@attack:4 " + attacker->getType() + " " + std::to_string(attacker->getID()) + " " + victim->getType() + " " + std::to_string(victim->getID()));
 }
 
 std::vector<std::shared_ptr<SC_Animal>>::iterator SC_Environnement::findAnimal(std::vector<std::shared_ptr<SC_Animal>> v, int id){
     return std::find_if(v.begin(), v.end(), [id](std::shared_ptr<SC_Animal> a) { return a->getID() == id; });
+}
+
+void SC_Environnement::damage(std::string type, int id, int value){
+    auto animal = findAnimal(animals[type], id)->get();
+
+    animal->addHP(-value);
+    logs->addToLog(logs->getID() + "@damage:3 " + animal->getType() + " " + std::to_string(animal->getID()) + " " + std::to_string(value));
 }
 
 int SC_Environnement::moveAnimals()
