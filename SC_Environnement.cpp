@@ -86,6 +86,8 @@ void SC_Environnement::move(std::string type, int id, std::string direction, int
     }else {
         return;
     }
+
+    logs->addToLog(logs->getID() + "@move:4 " + animal->getType() + " " + std::to_string(animal->getID()) + " " + direction + " " + std::to_string(pas));
 }
 
 int SC_Environnement::move(std::shared_ptr<SC_Animal> animal)

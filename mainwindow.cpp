@@ -115,6 +115,8 @@ void MainWindow::update(){
                 }else if(world != nullptr){
                     world->move(cmd.args[0], std::atoi(cmd.args[1].c_str()), cmd.args[2], std::atoi(cmd.args[3].c_str()));
                 }
+            }else if(!cmd.command.compare("damage")){
+
             }
         }
     }
