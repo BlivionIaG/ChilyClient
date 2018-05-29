@@ -3,6 +3,7 @@
 QT_GenericClient::QT_GenericClient(QString address, quint16 port, QObject *parent) : QObject(parent), alive{true}
 {
     socket = new QTcpSocket(this);
+    Connect(address, port);
 
     connect(socket, SIGNAL(connected()), this, SLOT(connectedToServer()));
     connect(socket, SIGNAL(disconnected()), this, SLOT(disconnectedFromServer()));
@@ -11,9 +12,14 @@ QT_GenericClient::QT_GenericClient(QString address, quint16 port, QObject *paren
 }
 
 void QT_GenericClient::Connect(QString address, quint16 port){
+
+    qDebug() << "Connexion au Serveur "+address+" au port "+QString::number(port);
+
     socket->connectToHost(address, port);
 
-    if(!socket->waitForDisconnected(timeout))
+    send("TEST@TEST:1 Hello World !");
+
+    if(socket->waitForDisconnected(timeout))
     {
         qDebug() << "Error: " << socket->errorString();
     }
@@ -54,6 +60,8 @@ bool QT_GenericClient::action(std::string msg) {
         } else {
             id = cmd.args[0];
             key = cmd.args[1];
+
+            qDebug() << QString::fromStdString(msg);
         }
     }else {
         return false;
@@ -74,7 +82,7 @@ void QT_GenericClient::receivedFromServer(){
 
     if (tmpBuffer.size() <= 0) {
         qDebug() << "Error: disconnected !";
-    } else if(!action(tmpBuffer)) {
+    } else if(!action(tmpBuffer.toStdString())) {
         buffer.append(tmpBuffer.toStdString());
     }
 }

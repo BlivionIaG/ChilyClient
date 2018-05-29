@@ -5,9 +5,12 @@
 #include <QTcpSocket>
 #include <QDebug>
 #include <QVector>
+#include <QHostAddress>
 
 #include <string>
 #include <vector>
+
+#include "cmdFormat.hpp"
 
 class QT_GenericClient : public QObject
 {

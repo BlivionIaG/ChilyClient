@@ -26,10 +26,23 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    qt_genericclient.cpp
+    qt_genericclient.cpp \
+    cmdFormat.cpp \
+    SC_Environnement.cpp \
+    SC_Lion.cpp \
+    SC_Register.cpp
 
 HEADERS += \
         mainwindow.hpp \
-    qt_genericclient.hpp
+    qt_genericclient.hpp \
+    cmdFormat.hpp \
+    SC_Animal.hpp \
+    SC_Entity.hpp \
+    SC_Environnement.hpp \
+    SC_Gazelle.hpp \
+    SC_Lion.hpp \
+    SC_Register.hpp
 
 CONFIG += c++17
+
+QMAKE_CXXFLAGS += -O3
