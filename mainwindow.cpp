@@ -1,7 +1,7 @@
 #include "mainwindow.hpp"
 
 MainWindow::MainWindow(int width, int height, QString title, QWidget *parent)
-    : QMainWindow(parent), mainWidget{new QWidget}, mainLayout{new QVBoxLayout}, serverConnectLayout{new QHBoxLayout}, simulationActionLayout{new QHBoxLayout}, client{nullptr}, world{nullptr}
+    : QMainWindow(parent), mainWidget{new QWidget}, mainLayout{new QVBoxLayout}, serverConnectLayout{new QHBoxLayout}, simulationActionLayout{new QHBoxLayout}, client{nullptr}, world{nullptr}, scene{nullptr}, sceneView{nullptr}
 {
     this->setWindowTitle(title);
     this->setMinimumHeight(height);
@@ -60,7 +60,9 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::initScene(){
-
+    scene = new Scene(this->width()/2,this->height()/2, this);
+    sceneView = new QGraphicsView;
+    sceneView->setScene(scene);
 }
 
 void MainWindow::connectToServer(){

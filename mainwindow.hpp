@@ -10,11 +10,13 @@
 #include <QPushButton>
 #include <QTimer>
 #include <QPixmap>
+#include <QGraphicsView>
 
 #include <memory>
 
 #include "qt_genericclient.hpp"
 #include "SC_Environnement.hpp"
+#include "scene.hpp"
 
 class MainWindow : public QMainWindow
 {
@@ -48,6 +50,9 @@ private:
     QT_GenericClient *client;
 
     std::shared_ptr<SC_Environnement> world;
+
+    Scene *scene;
+    QGraphicsView *sceneView;
 
     QPixmap *imgLion;
     QPixmap *imgGazelle;
