@@ -44,6 +44,7 @@ private:
 
     const int timeout = 1000;
     const int writeWaitTime = 3000;
+    const int receiveBufferLength = 8192;
 };
 
 #endif // QT_GENERICCLIENT_HPP

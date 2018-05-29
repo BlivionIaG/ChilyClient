@@ -17,8 +17,6 @@ void QT_GenericClient::Connect(QString address, quint16 port){
 
     socket->connectToHost(address, port);
 
-    send("TEST@TEST:1 Hello World !");
-
     if(socket->waitForDisconnected(timeout))
     {
         qDebug() << "Error: " << socket->errorString();
@@ -42,8 +40,8 @@ bool QT_GenericClient::send(const std::string &message){
         return false;
     }
 
+    //socket->write((message).c_str()+'\n');
     socket->write(message.c_str());
-    socket->flush();
 
     return socket->waitForBytesWritten(writeWaitTime);
 }
@@ -61,7 +59,7 @@ bool QT_GenericClient::action(std::string msg) {
             id = cmd.args[0];
             key = cmd.args[1];
 
-            qDebug() << QString::fromStdString(msg);
+            qDebug() << "id set to " << QString::fromStdString(id) << " and key is " << QString::fromStdString(key);
         }
     }else {
         return false;
@@ -78,12 +76,21 @@ void QT_GenericClient::disconnectedFromServer(){
 }
 
 void QT_GenericClient::receivedFromServer(){
-    auto tmpBuffer = socket->readAll();
+    auto tmp = socket->readAll();
+    /*auto lineBuffer = cmdFormat::split(tmp.toStdString(), '\n');
 
-    if (tmpBuffer.size() <= 0) {
+    for(auto &tmpBuffer : lineBuffer){
+        if (tmpBuffer.size() <= 0) {
+            qDebug() << "Error: disconnected !";
+        } else if(!action(tmpBuffer)) {
+            buffer.append(tmpBuffer);
+        }
+    }*/
+
+    if(tmp.size() <= 0){
         qDebug() << "Error: disconnected !";
-    } else if(!action(tmpBuffer.toStdString())) {
-        buffer.append(tmpBuffer.toStdString());
+    }else if(!action(tmp.toStdString())){
+        buffer.append(tmp.toStdString());
     }
 }
 
