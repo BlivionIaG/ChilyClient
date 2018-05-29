@@ -40,10 +40,9 @@ bool QT_GenericClient::send(const std::string &message){
         return false;
     }
 
-    //socket->write((message).c_str()+'\n');
-    socket->write(message.c_str());
+    socket->write((message).c_str());
 
-    return socket->waitForBytesWritten(writeWaitTime);
+    return socket->waitForBytesWritten(writeWaitTime);;
 }
 
 bool QT_GenericClient::action(std::string msg) {
@@ -77,7 +76,7 @@ void QT_GenericClient::disconnectedFromServer(){
 
 void QT_GenericClient::receivedFromServer(){
     auto tmp = socket->readAll();
-    /*auto lineBuffer = cmdFormat::split(tmp.toStdString(), '\n');
+    auto lineBuffer = cmdFormat::split(tmp.toStdString(), '\n');
 
     for(auto &tmpBuffer : lineBuffer){
         if (tmpBuffer.size() <= 0) {
@@ -85,12 +84,6 @@ void QT_GenericClient::receivedFromServer(){
         } else if(!action(tmpBuffer)) {
             buffer.append(tmpBuffer);
         }
-    }*/
-
-    if(tmp.size() <= 0){
-        qDebug() << "Error: disconnected !";
-    }else if(!action(tmp.toStdString())){
-        buffer.append(tmp.toStdString());
     }
 }
 
