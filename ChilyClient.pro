@@ -30,7 +30,8 @@ SOURCES += \
     cmdFormat.cpp \
     SC_Environnement.cpp \
     SC_Lion.cpp \
-    SC_Register.cpp
+    SC_Register.cpp \
+    scene.cpp
 
 HEADERS += \
         mainwindow.hpp \
@@ -41,7 +42,8 @@ HEADERS += \
     SC_Environnement.hpp \
     SC_Gazelle.hpp \
     SC_Lion.hpp \
-    SC_Register.hpp
+    SC_Register.hpp \
+    scene.hpp
 
 CONFIG += c++17
 

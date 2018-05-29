@@ -39,6 +39,9 @@ MainWindow::MainWindow(int width, int height, QString title, QWidget *parent)
     mainLayout->addLayout(simulationActionLayout);
     mainWidget->setLayout(mainLayout);
 
+    imgLion = nullptr;
+    imgGazelle = nullptr;
+
     this->setCentralWidget(mainWidget);
 
     timer = new QTimer(this);
@@ -53,6 +56,10 @@ MainWindow::MainWindow(int width, int height, QString title, QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+
+}
+
+void MainWindow::initScene(){
 
 }
 
@@ -94,6 +101,7 @@ void MainWindow::update(){
                     client->send("SERVER@createEnvironnement:2 error invalid parameters");
                 }else if(world == nullptr){
                     world = std::make_shared<SC_Environnement>(std::atoi(cmd.args[0].c_str()), std::atoi(cmd.args[1].c_str()));
+                    initScene();
                 }else{
                     client->send("SERVER@createEnvironnement:2 error world already created");
                 }

@@ -9,6 +9,7 @@
 #include <QSpinBox>
 #include <QPushButton>
 #include <QTimer>
+#include <QPixmap>
 
 #include <memory>
 
@@ -22,6 +23,8 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(int width = 800, int height = 600, QString title = "Chily Con Carne Client", QWidget *parent = 0);
     ~MainWindow();
+
+    void initScene();
 public slots:
     void connectToServer();
     void sendSimulationStart();
@@ -46,7 +49,12 @@ private:
 
     std::shared_ptr<SC_Environnement> world;
 
+    QPixmap *imgLion;
+    QPixmap *imgGazelle;
+
     const int refreshDelay = 20;
+    const std::string imgLionPath = "res/lion.png";
+    const std::string imgGazellePath = "res/gazelle.png";
 };
 
 #endif // MAINWINDOW_HPP
