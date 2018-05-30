@@ -1,42 +1,35 @@
 #include "scene.hpp"
 
-Scene::Scene(int width, int height, int elmSize, QObject *parent):  QGraphicsScene(parent), width{width}, height{height}, elmSize{elmSize}, world{world}
+Scene::Scene(int width, int height, QObject *parent):  QGraphicsScene(parent), width{width}, height{height}, world{nullptr}
 {
-    this->setSceneRect(0,0,width, height);
+    elmSize = 0;
+    QPixmap tmp;
+    tmp.load(QString::fromStdString(imgBG));
 
-    imgLion = new QPixmap(imgLionPath.c_str());
-    imgLion->scaled(elmSize, elmSize, Qt::KeepAspectRatio);
-    imgGazelle = new QPixmap(imgGazellePath.c_str());
-    imgGazelle->scaled(elmSize, elmSize, Qt::KeepAspectRatio);
+    QGraphicsPixmapItem *item = new QGraphicsPixmapItem(tmp.scaled(width, height));
+    item->setPos(0,0);
+    this->addItem(item);
 
-    timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
-    timer->start(displayRefreshRate);
-}
-
-void Scene::update(){
-
+    QMediaPlayer *player = new QMediaPlayer;
+    player->setMedia(QUrl::fromLocalFile(QFileInfo("./res/a.mp3").absoluteFilePath()));
+    player->setVolume(20);
+    player->play();
 }
 
 void Scene::createEnvironnement(int maxX, int maxY){
-    if(world == nullptr){
-        world = std::make_shared<SC_Environnement>(maxX, maxY);
-    }
+    world = std::make_shared<SC_Environnement>(maxX, maxY);
+    elmSize = width / maxX;
 }
 
 void Scene::addAnimal(std::string type, int id, int x, int y, int hp){
     if(world != nullptr){
         world->addAnimal(type, id, x,y,hp);
 
-        QPixmap *tmp = nullptr;
         if(!type.compare("Lion")){
-            tmp = imgLion->copy(x,y,imgLion->width(), imgLion->height());
+            addLionImg(id, x, y);
         }else if(!type.compare(("Gazelle"))){
-            tmp = imgGazelle->copy(x,y,imgGazelle->width(), imgGazelle->height());
+            addGazelleImg(id, x, y);
         }
-
-        imgData tmpid = {id, tmp};
-        images[QString::fromStdString(type)].append(tmpid);
     }
 }
 
@@ -50,11 +43,19 @@ void Scene::move(std::string type, int id, std::string direction, int pas){
     if(world != nullptr) {
         world->move(type, id, direction, pas);
 
-        auto image = findImage(images[QString::fromStdString(type)], id);
-        auto animal = world->findAnimal(world->getAnimals()[type], id);
 
-        image->image.rect().setX(animal->get()->getX());
-        image->image.rect().setY(animal->get()->getY());
+        auto x = images[id]->x();
+        auto y = images[id]->y();
+
+        if(!direction.compare("LEFT")){
+            images[id]->setPos(x-pas*elmSize,y);
+        }else if(!direction.compare("RIGHT")){
+            images[id]->setPos(x+pas*elmSize,y);
+        }else  if(!direction.compare("UP")){
+            images[id]->setPos(x,y-pas*elmSize);
+        }else if(!direction.compare("DOWN")){
+            images[id]->setPos(x,y+pas*elmSize);
+        }
     }
 }
 
@@ -62,4 +63,25 @@ void Scene::damage(std::string type, int id, int value){
     if(world != nullptr ) {
         world->damage(type, id, value);
     }
+}
+
+void Scene::addLionImg(int id, int x, int y){
+    QPixmap tmp;
+    tmp.load(QString::fromStdString(imgLionPath));
+
+    QGraphicsPixmapItem *item = new QGraphicsPixmapItem(tmp.scaled(elmSize, elmSize));
+    item->setPos(x*elmSize,y*elmSize);
+    this->addItem(item);
+
+    images.insert(id, item);
+}
+void Scene::addGazelleImg(int id, int x, int y){
+    QPixmap tmp;
+    tmp.load(QString::fromStdString(imgGazellePath));
+
+    QGraphicsPixmapItem *item = new QGraphicsPixmapItem(tmp.scaled(elmSize, elmSize));
+    item->setPos(x*elmSize,y*elmSize);
+    this->addItem(item);
+
+    images.insert(id, item);
 }
