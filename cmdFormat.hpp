@@ -7,7 +7,6 @@
 
 namespace cmdFormat
 {
-    
 
 struct cmdFormat
 {

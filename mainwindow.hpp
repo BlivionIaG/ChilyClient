@@ -22,6 +22,12 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
+    /**
+     *brief	Constructeur de la fenetre principale
+     *\param	width   largeur de la fenetre
+     *\param	height	hauteur de la fenetre
+     *\param    title   titre de la fenetre
+     */
     MainWindow(int width = 800, int height = 600, QString title = "Chily Con Carne Client", QWidget *parent = 0);
     ~MainWindow();
 
