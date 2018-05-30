@@ -9,13 +9,9 @@
 #include <QSpinBox>
 #include <QPushButton>
 #include <QTimer>
-#include <QPixmap>
 #include <QGraphicsView>
 
-#include <memory>
-
 #include "qt_genericclient.hpp"
-#include "SC_Environnement.hpp"
 #include "scene.hpp"
 
 class MainWindow : public QMainWindow
@@ -49,17 +45,10 @@ private:
     QTimer *timer;
     QT_GenericClient *client;
 
-    std::shared_ptr<SC_Environnement> world;
-
     Scene *scene;
     QGraphicsView *sceneView;
 
-    QPixmap *imgLion;
-    QPixmap *imgGazelle;
-
     const int refreshDelay = 20;
-    const std::string imgLionPath = "res/lion.png";
-    const std::string imgGazellePath = "res/gazelle.png";
 };
 
 #endif // MAINWINDOW_HPP

@@ -1,7 +1,7 @@
 #include "mainwindow.hpp"
 
 MainWindow::MainWindow(int width, int height, QString title, QWidget *parent)
-    : QMainWindow(parent), mainWidget{new QWidget}, mainLayout{new QVBoxLayout}, serverConnectLayout{new QHBoxLayout}, simulationActionLayout{new QHBoxLayout}, client{nullptr}, world{nullptr}, scene{nullptr}, sceneView{nullptr}
+    : QMainWindow(parent), mainWidget{new QWidget}, mainLayout{new QVBoxLayout}, serverConnectLayout{new QHBoxLayout}, simulationActionLayout{new QHBoxLayout}, client{nullptr}, scene{nullptr}, sceneView{nullptr}
 {
     this->setWindowTitle(title);
     this->setMinimumHeight(height);
@@ -39,9 +39,6 @@ MainWindow::MainWindow(int width, int height, QString title, QWidget *parent)
     mainLayout->addLayout(simulationActionLayout);
     mainWidget->setLayout(mainLayout);
 
-    imgLion = nullptr;
-    imgGazelle = nullptr;
-
     this->setCentralWidget(mainWidget);
 
     timer = new QTimer(this);
@@ -60,7 +57,7 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::initScene(){
-    scene = new Scene(this->width()/2,this->height()/2, this);
+    scene = new Scene(this->width()/2,this->height()/2,this->height()/40 , this);
     sceneView = new QGraphicsView;
     sceneView->setScene(scene);
 }
@@ -101,35 +98,37 @@ void MainWindow::update(){
             if(!cmd.command.compare("createEnvironnement")){
                 if(cmd.args.size() < 2){
                     client->send("SERVER@createEnvironnement:2 error invalid parameters");
-                }else if(world == nullptr){
-                    world = std::make_shared<SC_Environnement>(std::atoi(cmd.args[0].c_str()), std::atoi(cmd.args[1].c_str()));
+                }else if(scene == nullptr){
                     initScene();
+                    scene->createEnvironnement(std::atoi(cmd.args[0].c_str()), std::atoi(cmd.args[1].c_str()));
+
+                    qDebug() << "Earth is Flat !";
                 }else{
                     client->send("SERVER@createEnvironnement:2 error world already created");
                 }
             }else if(!cmd.command.compare("addAnimal")){
                 if(cmd.args.size() < 5){
                     client->send("SERVER@addAnimal:2 error invalid parameters");
-                }else if(world!=nullptr){
-                    world->addAnimal(cmd.args[0], std::atoi(cmd.args[1].c_str()), std::atoi(cmd.args[2].c_str()),std::atoi(cmd.args[3].c_str()),std::atoi(cmd.args[4].c_str()));
+                }else if(scene!=nullptr){
+                    scene->addAnimal(cmd.args[0], std::atoi(cmd.args[1].c_str()), std::atoi(cmd.args[2].c_str()),std::atoi(cmd.args[3].c_str()),std::atoi(cmd.args[4].c_str()));
                 }
             }else if(!cmd.command.compare("attack")){
                 if(cmd.args.size() < 4){
                     client->send("SERVER@attack:2 error invalid parameters");
-                }else if(world!=nullptr){
-                    world->attack(cmd.args[0], std::atoi(cmd.args[1].c_str()), cmd.args[2], std::atoi(cmd.args[3].c_str()));
+                }else if(scene!=nullptr){
+                    scene->attack(cmd.args[0], std::atoi(cmd.args[1].c_str()), cmd.args[2], std::atoi(cmd.args[3].c_str()));
                 }
             }else if(!cmd.command.compare("move")){
                 if(cmd.args.size() < 4){
                     client->send("SERVER@move:2 error invalid parameters");
-                }else if(world != nullptr){
-                    world->move(cmd.args[0], std::atoi(cmd.args[1].c_str()), cmd.args[2], std::atoi(cmd.args[3].c_str()));
+                }else if(scene != nullptr){
+                    scene->move(cmd.args[0], std::atoi(cmd.args[1].c_str()), cmd.args[2], std::atoi(cmd.args[3].c_str()));
                 }
             }else if(!cmd.command.compare("damage")){
                 if(cmd.args.size() < 3){
                     client->send("SERVER@damage:2 error invalid parameters");
-                }else if(world != nullptr){
-                    world->damage(cmd.args[0], std::atoi(cmd.args[1].c_str()), std::atoi(cmd.args[2].c_str()));
+                }else if(scene != nullptr){
+                    scene->damage(cmd.args[0], std::atoi(cmd.args[1].c_str()), std::atoi(cmd.args[2].c_str()));
                 }
             }
         }
